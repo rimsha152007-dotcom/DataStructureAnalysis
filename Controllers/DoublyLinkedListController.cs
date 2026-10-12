@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using DSALabsApi.Models;
 using DSALabsApi.Services;
 
-namespace DSALabsWeek03Api.Controllers
+namespace DSALabsApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -128,6 +128,30 @@ namespace DSALabsWeek03Api.Controllers
         {
             _list.Clear();
             return Ok(ApiResponse<object>.Ok(new { }, "List cleared."));
+        }
+             // ⭐ NEW ENDPOINT: DELETE /api/doublylinkedlist/delete-value
+        [HttpDelete("delete-value")]
+        public IActionResult DeleteValue([FromBody] DeleteValueRequest req)
+        {
+            var (ok, msg) = _list.DeleteByValue(req.Value);
+            if (!ok) return BadRequest(ApiResponse<object>.Fail(msg));
+            return Ok(ApiResponse<object>.Ok(new
+            {
+                forward = _list.TraverseForward(),
+                backward = _list.TraverseBackward()
+            }, msg));
+        }
+
+        // ⭐ NEW ENDPOINT: POST /api/doublylinkedlist/reverse
+        [HttpPost("reverse")]
+        public IActionResult Reverse()
+        {
+            _list.Reverse();
+            return Ok(ApiResponse<object>.Ok(new
+            {
+                forward = _list.TraverseForward(),
+                backward = _list.TraverseBackward()
+            }, "Doubly linked list reversed in-place."));
         }
     }
 }

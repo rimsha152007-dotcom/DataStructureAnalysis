@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using DSALabsApi.Models;
 using DSALabsApi.Services;
 
-namespace DSALabsWeek03Api.Controllers
+namespace DSALabsApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -71,6 +71,41 @@ namespace DSALabsWeek03Api.Controllers
         {
             _list.Clear();
             return Ok(ApiResponse<int[]>.Ok(_list.Traverse(), "List cleared."));
+        }
+                // ⭐ NEW ENDPOINT: POST /api/circularlinkedlist/insert-position
+        [HttpPost("insert-position")]
+        public IActionResult InsertPosition([FromBody] InsertPositionRequest req)
+        {
+            var (ok, msg) = _list.InsertAtPosition(req.Position, req.Value);
+            if (!ok) return BadRequest(ApiResponse<int[]>.Fail(msg));
+            return Ok(ApiResponse<int[]>.Ok(_list.Traverse(), msg));
+        }
+
+        // ⭐ NEW ENDPOINT: DELETE /api/circularlinkedlist/delete-position
+        [HttpDelete("delete-position")]
+        public IActionResult DeletePosition([FromBody] DeletePositionRequest req)
+        {
+            var (ok, msg) = _list.DeleteAtPosition(req.Position);
+            if (!ok) return BadRequest(ApiResponse<int[]>.Fail(msg));
+            return Ok(ApiResponse<int[]>.Ok(_list.Traverse(), msg));
+        }
+
+        // ⭐ NEW ENDPOINT: DELETE /api/circularlinkedlist/delete-value
+        [HttpDelete("delete-value")]
+        public IActionResult DeleteValue([FromBody] DeleteValueRequest req)
+        {
+            var (ok, msg) = _list.DeleteByValue(req.Value);
+            if (!ok) return BadRequest(ApiResponse<int[]>.Fail(msg));
+            return Ok(ApiResponse<int[]>.Ok(_list.Traverse(), msg));
+        }
+
+        // ⭐ NEW ENDPOINT: PUT /api/circularlinkedlist/update
+        [HttpPut("update")]
+        public IActionResult Update([FromBody] UpdateRequest req)
+        {
+            var (ok, msg) = _list.UpdateAtPosition(req.Position, req.NewValue);
+            if (!ok) return BadRequest(ApiResponse<int[]>.Fail(msg));
+            return Ok(ApiResponse<int[]>.Ok(_list.Traverse(), msg));
         }
     }
 }

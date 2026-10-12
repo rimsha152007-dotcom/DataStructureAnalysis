@@ -146,5 +146,56 @@ namespace DSALabsApi.Services
 
         // ---------- Helper: clear all (for demo resets) ----------
         public void Clear() { _head = null; _size = 0; }
+                // ⭐ NEW: Delete first occurrence by value (O(n))
+        public (bool ok, string msg) DeleteByValue(int value)
+        {
+            if (_head == null) return (false, "Underflow: list is empty.");
+
+            if (_head.Data == value) return DeleteFromBeginning();
+
+            var current = _head;
+            while (current.Next != null && current.Next.Data != value)
+                current = current.Next;
+
+            if (current.Next == null)
+                return (false, $"Value {value} not found in the list.");
+
+            current.Next = current.Next.Next;
+            _size--;
+            return (true, $"Deleted first occurrence of value {value}.");
+        }
+
+        // ⭐ NEW: In-place Reversal using 3 pointers (O(n) time, O(1) space)
+        public void Reverse()
+        {
+            Node? prev = null;
+            var current = _head;
+            while (current != null)
+            {
+                var next = current.Next;
+                current.Next = prev;
+                prev = current;
+                current = next;
+            }
+            _head = prev;
+        }
+
+        // ⭐ NEW: Floyd's Two-Pointer / Tortoise-and-Hare algorithm to find middle
+        public (bool ok, int? value, string msg) GetMiddle()
+        {
+            if (_head == null) return (false, null, "List is empty.");
+
+            var slow = _head;
+            var fast = _head;
+
+            // Fast moves 2 steps, slow moves 1 step
+            while (fast != null && fast.Next != null)
+            {
+                slow = slow!.Next;
+                fast = fast.Next.Next;
+            }
+
+            return (true, slow!.Data, $"Middle element is {slow.Data}.");
+        }
     }
 }

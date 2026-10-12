@@ -100,6 +100,75 @@ namespace DSALabsApi.Services
             _size--;
             return (true, "Removed last node.");
         }
+                // ⭐ NEW: Insert at specific position (0-based)
+        public (bool ok, string msg) InsertAtPosition(int pos, int value)
+        {
+            if (pos < 0 || pos > _size)
+                return (false, $"Invalid position. Valid range: 0 to {_size}.");
+
+            if (pos == 0) { InsertAtBeginning(value); return (true, "Inserted at position 0."); }
+            if (pos == _size) { InsertAtEnd(value); return (true, $"Inserted at position {pos}."); }
+
+            var curr = _head;
+            for (int i = 0; i < pos - 1 && curr != null; i++)
+                curr = curr.Next;
+
+            if (curr == null) return (false, "Position out of range.");
+
+            var node = new Node(value) { Next = curr.Next };
+            curr.Next = node;
+            _size++;
+            return (true, $"Inserted {value} at position {pos}.");
+        }
+
+        // ⭐ NEW: Delete at specific position (0-based)
+        public (bool ok, string msg) DeleteAtPosition(int pos)
+        {
+            if (_head == null) return (false, "Underflow: list is empty.");
+            if (pos < 0 || pos >= _size)
+                return (false, $"Invalid position. Valid range: 0 to {_size - 1}.");
+
+            if (pos == 0) return DeleteFromBeginning();
+            if (pos == _size - 1) return DeleteFromEnd();
+
+            var curr = _head;
+            for (int i = 0; i < pos - 1; i++) curr = curr!.Next;
+
+            curr!.Next = curr.Next!.Next;
+            _size--;
+            return (true, $"Removed node at position {pos}.");
+        }
+
+        // ⭐ NEW: Update at position
+        public (bool ok, string msg) UpdateAtPosition(int pos, int newValue)
+        {
+            if (pos < 0 || pos >= _size)
+                return (false, $"Invalid position. Valid range: 0 to {_size - 1}.");
+
+            var curr = _head;
+            for (int i = 0; i < pos; i++) curr = curr!.Next;
+            curr!.Data = newValue;
+            return (true, $"Updated position {pos} to {newValue}.");
+        }
+
+        // ⭐ NEW: Delete by value in circular loop
+        public (bool ok, string msg) DeleteByValue(int value)
+        {
+            if (_head == null) return (false, "Underflow: list is empty.");
+
+            if (_head.Data == value) return DeleteFromBeginning();
+
+            var curr = _head;
+            while (curr.Next != _head && curr.Next!.Data != value)
+                curr = curr.Next;
+
+            if (curr.Next == _head)
+                return (false, $"Value {value} not found in the circular list.");
+
+            curr.Next = curr.Next.Next;
+            _size--;
+            return (true, $"Deleted value {value} from circular list.");
+        }
 
         // ---------- Task 06: Search ----------
         public int Search(int key)

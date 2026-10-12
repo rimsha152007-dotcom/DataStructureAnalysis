@@ -76,6 +76,31 @@ namespace DSALabsApi.Controllers
             if (!ok) return BadRequest(ApiResponse<int[]>.Fail(msg));
             return Ok(ApiResponse<int[]>.Ok(_list.Traverse(), msg));
         }
+                // ⭐ NEW ENDPOINT: DELETE /api/singlylinkedlist/delete-value
+        [HttpDelete("delete-value")]
+        public IActionResult DeleteValue([FromBody] DeleteValueRequest req)
+        {
+            var (ok, msg) = _list.DeleteByValue(req.Value);
+            if (!ok) return BadRequest(ApiResponse<int[]>.Fail(msg));
+            return Ok(ApiResponse<int[]>.Ok(_list.Traverse(), msg));
+        }
+
+        // ⭐ NEW ENDPOINT: POST /api/singlylinkedlist/reverse
+        [HttpPost("reverse")]
+        public IActionResult Reverse()
+        {
+            _list.Reverse();
+            return Ok(ApiResponse<int[]>.Ok(_list.Traverse(), "List reversed successfully."));
+        }
+
+        // ⭐ NEW ENDPOINT: GET /api/singlylinkedlist/middle
+        [HttpGet("middle")]
+        public IActionResult GetMiddle()
+        {
+            var (ok, value, msg) = _list.GetMiddle();
+            if (!ok) return BadRequest(ApiResponse<int?>.Fail(msg));
+            return Ok(ApiResponse<int?>.Ok(value, msg));
+        }
 
         // POST: /api/singlylinkedlist/search
         [HttpPost("search")]

@@ -55,6 +55,8 @@ namespace DSALabsApi.Models
     public class SearchRequest { public int Key { get; set; } }
 
     public class DeletePositionRequest { public int Position { get; set; } }
+        // ⭐ NEW: Allows deleting by node value
+    public class DeleteValueRequest { public int Value { get; set; } }
 
     // ---------- Student DTOs ----------
     public class AddStudentRequest { public int RollNumber { get; set; } }

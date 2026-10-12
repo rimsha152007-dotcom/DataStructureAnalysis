@@ -158,5 +158,48 @@ namespace DSALabsApi.Services
         }
 
         public void Clear() { _head = _tail = null; _size = 0; }
+                // ⭐ NEW: Delete node by value (O(n) search, O(1) unlinking)
+        public (bool ok, string msg) DeleteByValue(int value)
+        {
+            if (_head == null) return (false, "Underflow: list is empty.");
+
+            var curr = _head;
+            while (curr != null && curr.Data != value)
+                curr = curr.Next;
+
+            if (curr == null)
+                return (false, $"Value {value} not found in the list.");
+
+            if (curr == _head) return DeleteFromBeginning();
+            if (curr == _tail) return DeleteFromEnd();
+
+            curr.Prev!.Next = curr.Next;
+            curr.Next!.Prev = curr.Prev;
+            _size--;
+            return (true, $"Deleted node with value {value}.");
+        }
+
+        // ⭐ NEW: In-place Doubly Linked List reversal (swapping Prev and Next)
+        public void Reverse()
+        {
+            if (_head == null || _head == _tail) return;
+
+            var curr = _head;
+            Node? temp = null;
+
+            while (curr != null)
+            {
+                temp = curr.Prev;
+                curr.Prev = curr.Next;
+                curr.Next = temp;
+                curr = curr.Prev; // moves forward because pointers were swapped
+            }
+
+            _tail = _head;
+            if (temp != null)
+            {
+                _head = temp.Prev;
+            }
+        }
     }
 }
